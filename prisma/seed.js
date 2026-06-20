@@ -1,3 +1,4 @@
+require('dotenv').config()
 const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
@@ -8,6 +9,7 @@ async function main() {
   const password = process.env.SUPER_ADMIN_PASSWORD;  //password du user dans .env
   const hashedPassword = await bcrypt.hash(password, 10);  //password crypté
 
+  
   // creer un superAdmin s' il n'existe pas encore
   const superAdmin = await prisma.User.upsert({
     where: { email },

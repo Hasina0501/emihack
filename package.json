@@ -8,10 +8,7 @@
     "prisma:migrate:dev": "npx prisma migrate dev",
     "prisma:generate": "npx prisma generate",
     "prisma:studio": "npx prisma studio",
-    "prisma:seed": "node prisma/seed.js",
-    "seed:offers": "node script.js seed",
-    "list:offers": "node script.js list",
-    "clear:offers": "node script.js clear"
+    "prisma:seed": "node prisma/seed.js"
   },
   "keywords": [],
   "author": "",

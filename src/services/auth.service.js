@@ -17,7 +17,7 @@ const loginService = async (payload)=>{
         role: user.role 
     },
     process.env.JWT_SECRET, //mot secret dans .env
-    { expiresIn: "1d" }  // exipire dans 1jour
+    { expiresIn: "5d" }  // exipire dans 5jour
 );
 
     return {token}
