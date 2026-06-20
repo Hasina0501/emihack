@@ -18,6 +18,8 @@ model User {
   password     String
   Role         Role           @default(public)
 
+  isVerified    Boolean        @default(false)
+
   refreshTokens RefreshToken[]
 
   createdAt    DateTime       @default(now())
@@ -31,7 +33,7 @@ model RefreshToken {
   expiresAt  DateTime
   revoked    Boolean  @default(false)
 
-  userId     Int      @unique
+  userId     Int      
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt  DateTime @default(now())

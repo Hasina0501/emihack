@@ -1,5 +1,6 @@
 const prisma = require("../prisma");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -11,12 +12,18 @@ const {
   sendError,
 } = require("../utils/response");
 
-/* REGISTER */
+
 exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    if(!validator.isEmail(email)) {
+      return res.status(400).json({
+        error: 'Email invalide'
+      });
+    }
 
     const user = await prisma.user.create({
       data: {
@@ -40,12 +47,17 @@ exports.register = async (req, res) => {
   }
 };
 
-/* REGISTER SU */
 exports.registerSU = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    if(!validator.isEmail(email)) {
+      return res.status(400).json({
+        error: 'Email invalide'
+      });
+    }
 
     const user = await prisma.user.create({
       data: {
@@ -69,10 +81,15 @@ exports.registerSU = async (req, res) => {
   }
 };
 
-/* LOGIN */
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if(!validator.isEmail(email)) {
+      return res.status(400).json({
+        error: 'Email invalide'
+      });
+    }
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -90,10 +107,6 @@ exports.login = async (req, res) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken();
-
-    await prisma.refreshToken.deleteMany({
-      where: { userId: user.id },
-    });
 
     await prisma.refreshToken.create({
       data: {
@@ -116,7 +129,6 @@ exports.login = async (req, res) => {
   }
 };
 
-/* REFRESH */
 exports.refresh = async (req, res) => {
   try {
     const { refreshToken } = req.body;
@@ -169,7 +181,6 @@ exports.refresh = async (req, res) => {
   }
 };
 
-/* PROFILE */
 exports.profile = async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user.sub },
@@ -184,11 +195,12 @@ exports.profile = async (req, res) => {
   return sendSuccess(res, "Profil récupéré", safeUser);
 };
 
-/* LOGOUT */
 exports.logout = async (req, res) => {
   try {
     await prisma.refreshToken.deleteMany({
-      where: { userId: req.user.sub },
+      where: { 
+        token: refreshToken
+      },
     });
 
     return sendSuccess(res, "Déconnexion réussie");
